@@ -18,10 +18,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
 
     @Bean
     protected UserDetailsService userDetailsService() {
@@ -38,18 +34,23 @@ public class WebSecurityConfig {
         return new InMemoryUserDetailsManager(user, admin);
     }
 
+    @Bean
+    protected PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http.csrf(AbstractHttpConfigurer::disable)
+    protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        return http
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         request -> request.requestMatchers("/login").permitAll()
                                 .requestMatchers("/**").authenticated()
                 )
                 .formLogin(Customizer.withDefaults())
-                .logout(config -> config.logoutUrl("/logout")
+                .logout(config -> config
+                        .logoutUrl("/logout")
                         .logoutSuccessUrl("/login"))
                 .build();
     }
-
 }
