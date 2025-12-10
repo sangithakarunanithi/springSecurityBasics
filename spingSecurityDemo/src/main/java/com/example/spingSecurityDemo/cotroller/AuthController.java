@@ -11,4 +11,9 @@ public class AuthController {
         return "index";
     }
 
+    @GetMapping("/login")
+    public String login(){
+        return "login";
+    }
+
 }
